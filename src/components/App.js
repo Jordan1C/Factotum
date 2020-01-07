@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import { firebaseConfig } from '../firebase/config';
+import { FirebaseWrapper } from '../firebase/firebase';
 
 const Title = styled.h1`
     color: black;
@@ -7,6 +9,9 @@ const Title = styled.h1`
     font-weight: 700;
 `;
 
-const App = () => <Title>Factotum</Title>;
+const App = () => {
+    FirebaseWrapper.GetInstance().Initialize(firebaseConfig);
+    return <Title>Factotum</Title>;
+};
 
 export default App;
