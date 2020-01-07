@@ -7,6 +7,6 @@ const Title = styled.h1`
     font-weight: 700;
 `;
 
-const App = () => <Title>React Jordan</Title>;
+const App = () => <Title>Factotum</Title>;
 
 export default App;
