@@ -68,7 +68,7 @@ export class FirebaseWrapper {
 
     async GetAllEvents(callback) {
         try {
-            const eventCollection = this._firestore.collection('Events');
+            const eventCollection = this._firestore.collection('events');
             if (eventCollection) {
                 await eventCollection.onSnapshot(snapshot => {
                     let container = [];
@@ -85,7 +85,7 @@ export class FirebaseWrapper {
 
     async GetSingleEvent(event, callback) {
         try {
-            const eventRef = this._firestore.collection('Events').doc(event);
+            const eventRef = this._firestore.collection('events').doc(event);
             if (eventRef) {
                 await eventRef.onSnapshot(snapshot => {
                     let container = [];
@@ -102,7 +102,7 @@ export class FirebaseWrapper {
 
     async AddEvent(event, city, startDate, endDate, group, callback) {
         try {
-            const eventRef = this._firestore.collection('Events').doc(event);
+            const eventRef = this._firestore.collection('events').doc(event);
             const timestamp = firebase.firestore.Timestamp.now().toDate();
             const newEvent = await eventRef.set({
                 event,
@@ -123,7 +123,7 @@ export class FirebaseWrapper {
 
     async DelEvent(event, callback) {
         try {
-            const eventRef = this._firestore.collection('Events').doc(event);
+            const eventRef = this._firestore.collection('events').doc(event);
             if (eventRef) {
                 return await eventRef.delete().then(callback);
             }
@@ -134,7 +134,7 @@ export class FirebaseWrapper {
 
     async UpdateEventDate(event, startDate, endDate, callback) {
         try {
-            const eventRef = this._firestore.collection('Events').doc(event);
+            const eventRef = this._firestore.collection('events').doc(event);
             const timestamp = firebase.firestore.Timestamp.now().toDate();
             if (eventRef) {
                 // prettier-ignore
@@ -152,7 +152,7 @@ export class FirebaseWrapper {
 
     async AddEventSite(event, siteLink, callback) {
         try {
-            const eventRef = this._firestore.collection('Events').doc(event);
+            const eventRef = this._firestore.collection('events').doc(event);
             const timestamp = firebase.firestore.Timestamp.now().toDate();
             if (eventRef) {
                 // prettier-ignore
@@ -169,7 +169,7 @@ export class FirebaseWrapper {
 
     async AddEventSheet(event, spreadsheet, callback) {
         try {
-            const eventRef = this._firestore.collection('Events').doc(event);
+            const eventRef = this._firestore.collection('events').doc(event);
             const timestamp = firebase.firestore.Timestamp.now().toDate();
             if (eventRef) {
                 // prettier-ignore
@@ -184,13 +184,31 @@ export class FirebaseWrapper {
         }
     }
 
-    async AddAttendeeToList(event, callback) {
+    async GetAttendeeList(event, callback) {
+        try {
+            const listRef = this._firestore
+                .collection('events')
+                .doc(event)
+                .collection('attendees');
+            await listRef.get().onSnapshot(snapshot => {
+                let container = [];
+                snapshot.forEach(doc => {
+                    container.push(doc.data());
+                });
+                return callback(container);
+            });
+        } catch (error) {
+            console.log('GetAttendeeList failed', error);
+        }
+    }
+
+    async UpdateAttendeeList(event, callback) {
         try {
             const user = this._auth.currentUser;
             const attendeeRef = this._firestore
-                .collection('Events')
+                .collection('events')
                 .doc(event)
-                .collection('Attendees')
+                .collection('attendees')
                 .doc(user.displayName);
             await attendeeRef.get().then(async attendee => {
                 attendee.exists
@@ -204,20 +222,7 @@ export class FirebaseWrapper {
                           .then(doc => callback(doc.data()));
             });
         } catch (error) {
-            console.log('AddAttendeeToList failed', error);
-        }
-    }
-
-    async RemoveAttendeeFromList(event, callback) {
-        try {
-            const user = this._auth.currentUser;
-            const attendeeRef = this._firestore
-                .collection('Events')
-                .doc(event)
-                .collection('Attendees')
-                .doc(user.uid);
-        } catch (error) {
-            console.log('RemoveAttendeeFromList failed', error);
+            console.log('UpdateAttendeeList failed', error);
         }
     }
 }
