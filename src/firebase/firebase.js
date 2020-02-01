@@ -100,13 +100,15 @@ export class FirebaseWrapper {
         }
     }
 
-    async AddEvent(event, city, startDate, endDate, group, callback) {
+    async AddEvent(eventName, hostCity, startDate, endDate, group, callback) {
         try {
-            const eventRef = this._firestore.collection('events').doc(event);
+            const eventRef = this._firestore
+                .collection('events')
+                .doc(eventName);
             const timestamp = firebase.firestore.Timestamp.now().toDate();
             const newEvent = await eventRef.set({
-                event,
-                city,
+                eventName,
+                hostCity,
                 startDate,
                 endDate,
                 group,

@@ -134,7 +134,7 @@ export const verifyAuth = () => async dispatch => {
     }
 };
 
-const authState = {
+export const authState = {
     isSigningUp: false,
     isLoggingIn: false,
     isLoggingOut: false,
@@ -146,7 +146,7 @@ const authState = {
     user: {}
 };
 
-export default (state = authState, action) => {
+const authReducer = (state = authState, action) => {
     switch (action.type) {
         case SIGNUP_REQUEST:
             return { ...state, isSigningUp: true, signupError: false };
@@ -214,3 +214,5 @@ export default (state = authState, action) => {
             return state;
     }
 };
+
+export default authReducer;

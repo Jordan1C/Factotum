@@ -47,16 +47,16 @@ export const getSingleEvent = event => async dispatch => {
 };
 
 export const addEvent = (
-    event,
-    city,
+    eventName,
+    hostCity,
     startDate,
     endDate,
     group
 ) => async dispatch => {
     try {
         await FirebaseWrapper.GetInstance().AddEvent(
-            event,
-            city,
+            eventName,
+            hostCity,
             startDate,
             endDate,
             group,
@@ -118,12 +118,12 @@ export const updateEventWithSheet = (event, spreadsheet) => async dispatch => {
     }
 };
 
-const eventState = {
+export const eventState = {
     eventList: [],
     singleEvent: {}
 };
 
-export default (state = eventState, action) => {
+const eventReducer = (state = eventState, action) => {
     switch (action.type) {
         case GOT_ALL_EVENTS:
             return { ...state, eventList: action.events };
@@ -149,3 +149,5 @@ export default (state = eventState, action) => {
             return state;
     }
 };
+
+export default eventReducer;
